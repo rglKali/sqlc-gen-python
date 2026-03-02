@@ -1,0 +1,49 @@
+name: Build and Release WASM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26'  # adjust as needed
+
+      - name: Build WASM binary
+        run: |
+          GOOS=wasip1 GOARCH=wasm go build -o sqlc-gen-python.wasm plugin/generate.go
+
+      - name: Compute SHA256
+        id: sha
+        run: |
+          echo "sha256=$(sha256sum sqlc-gen-python.wasm | awk '{print $1}')" >> $GITHUB_OUTPUT
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sqlc-gen-python-wasm
+          path: sqlc-gen-python.wasm
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          body: |
+            Built WASM artifact from commit: ${{ github.sha }}
+
+            SHA256: `${{ steps.sha.outputs.sha256 }}`
+
+            Artifact: sqlc-gen-python.wasm
+          files: sqlc-gen-python.wasm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
