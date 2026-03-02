@@ -20,7 +20,7 @@ jobs:
 
       - name: Build WASM binary
         run: |
-          GOOS=wasip1 GOARCH=wasm go build -o sqlc-gen-python.wasm plugin/generate.go
+          GOOS=wasip1 GOARCH=wasm go build -o sqlc-gen-python.wasm plugin/codegen.go
 
       - name: Compute SHA256
         id: sha
