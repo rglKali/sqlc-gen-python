@@ -27,10 +27,10 @@ class Querier:
 {{range .}}
     async def {{toSnakeCase .Name}}(self{{if .Params}}, *{{range .Params}}, {{.Column.Name}}: {{if .Column.IsArray}}list[{{resolve .Column.Type}}]{{else}}{{resolve .Column.Type}}{{if not .Column.NotNull}} | None{{end}}{{end}}{{end}}{{end}}) -> {{if eq .Cmd ":one"}}{{toPascalCase .Name}}Record | None{{else if eq .Cmd ":many"}}list[{{toPascalCase .Name}}Record]{{else}}None{{end}}:
 {{- if eq .Cmd ":one"}}
-        return await self.pool.fetchrow({{toUpperCase .Name}}{{range .Params}}, {{.Column.Name}}{{end}}, record_class={{toPascalCase .Name}}Record)
+        return await self.pool.fetchrow({{toUpperCase .Name}}_SQL{{range .Params}}, {{.Column.Name}}{{end}}, record_class={{toPascalCase .Name}}Record)
 {{- else if eq .Cmd ":many"}}
-        return await self.pool.fetch({{toUpperCase .Name}}{{range .Params}}, {{.Column.Name}}{{end}}, record_class={{toPascalCase .Name}}Record)
+        return await self.pool.fetch({{toUpperCase .Name}}_SQL{{range .Params}}, {{.Column.Name}}{{end}}, record_class={{toPascalCase .Name}}Record)
 {{- else}}
-        await self.pool.execute({{toUpperCase .Name}}{{range .Params}}, {{.Column.Name}}{{end}})
+        await self.pool.execute({{toUpperCase .Name}}_SQL{{range .Params}}, {{.Column.Name}}{{end}})
 {{- end}}
 {{end -}}
