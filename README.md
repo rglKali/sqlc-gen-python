@@ -17,6 +17,7 @@ sql:
 ```
 
 ## Structure
+```
 ├── LICENSE
 ├── README.md
 ├── go.mod
@@ -31,6 +32,7 @@ sql:
 │   └── resolve_test.go
 └── plugin
     └── codegen.go        -- entrypoint
+```
 
 ## Options:
 To be done later...
